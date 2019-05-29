@@ -1,0 +1,21 @@
+ion-slide {
+    word-break: break-all;
+    display: block !important;
+}
+
+ion-input{
+    --placeholder-color: #aaaaaa;
+}
+
+.large-font {
+    font-size: 35px;
+}
+
+.swiper-container {
+    height: 100% !important;
+    overflow-y: auto;
+}
+
+.last-item-borderless .item-inner {
+    border: 0 !important;
+}

@@ -1,0 +1,107 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (tap)="close()">
+                <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+
+        <ion-title>Kirim Teguran</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-slides #sendRebukesStep [options]="slideOpts" (ionSlideDidChange)="stepChange($event)" (ionSlideTransitionStart)="stepOnChange()">
+        <ion-slide text-wrap>
+            <form [formGroup]="stepAFormGroup" novalidate>
+                <ion-item>
+                    <ion-label position="stacked">Nomor Plat</ion-label>
+                    <ion-input
+                        formControlName="number"
+                        autocomplete="number"
+                        autocapitalize="on"
+                        inputmode="text"
+                        minlength="3"
+                        maxlength="9"
+                        pattern="[A-Za-z0-9]*"
+                        (ionInput)="plateOnInput($event)"
+                        placeholder="&mdash; &mdash; &mdash; &mdash; &mdash; &mdash;"
+                        class="large-font">
+                    </ion-input>
+                </ion-item>
+
+                <ion-item *ngIf="isLoading" no-lines>
+                    <ion-spinner name="dots"></ion-spinner>
+                </ion-item>
+
+                <ion-item *ngIf="isError" no-lines>
+                    <ion-text color="danger" class="small">
+                        Terjadi kesalahan sementara. Tutup jendela ini lalu ulangi lagi.
+                    </ion-text>
+                </ion-item>
+
+                <ion-radio-group *ngIf="vehicleList" formControlName="vehicle" (ionChange)="vehicleSelect($event)">
+                    <ion-item *ngFor="let vehicle of vehicleList; let last = last" lines="{{ last ? 'none' : '' }}">
+                        <ion-label>{{ vehicle.variety }}</ion-label>
+                        <ion-radio slot="start" value="{{ vehicle.url }}" color="dark" name="vehicle" required>
+                        </ion-radio>
+        
+                        <ion-icon *ngIf="vehicle.shortcode == 'MTR'" name="bicycle" slot="end"></ion-icon>
+                        <ion-icon *ngIf="vehicle.shortcode == 'MBL'" name="car" slot="end"></ion-icon>
+                    </ion-item>
+                </ion-radio-group>
+            </form>
+        </ion-slide>
+
+        <ion-slide data-hash="slide2">
+            <form [formGroup]="stepBFormGroup" novalidate>
+                <ion-item no-lines>
+                    <ion-label>Pilih Pelanggaran</ion-label>
+                </ion-item>
+
+                <ion-radio-group *ngIf="vehicleViolations" formControlName="violation">
+                    <ion-item *ngFor="let item of vehicleViolations; let last = last" lines="{{ last ? 'none' : '' }}">
+                        <ion-label>{{ item.variety }}</ion-label>
+                        <ion-radio slot="start" value="{{ item.uuid_id }}" color="dark" required>
+                        </ion-radio>
+                    </ion-item>
+                </ion-radio-group>
+
+                <ion-item-divider></ion-item-divider>
+                
+                <ion-item>
+                    <ion-label position="stacked">Keterangan lebih lanjut</ion-label>
+                    <ion-textarea #explanationElement formControlName="explanation" auto-grow="true" placeholder="Tulis disini"></ion-textarea>
+                </ion-item>
+            </form>
+        </ion-slide>
+
+        <ion-slide data-hash="slide3">
+            <h1>Slide 3</h1>
+            {{ stepIndex }}
+            <ion-button (tap)="prevStep(stepIndex)">Prev</ion-button>
+        </ion-slide>
+    </ion-slides>
+</ion-content>
+
+<ion-footer>
+    <ion-toolbar>
+        <ion-grid>
+            <ion-row>
+                <ion-col>
+                    <ion-button *ngIf="stepIndex > 0" (tap)="prevStep(stepIndex)" expand="block" color="light">
+                        <ion-icon slot="icon-only" name="arrow-back" slot="start"></ion-icon>
+                        Kembali
+                    </ion-button>
+                </ion-col>
+
+                <ion-col>
+                    <ion-button (tap)="nextStep(stepIndex)" expand="block" color="light" [disabled]="(stepIndex == 0 ? stepAFormGroup.invalid : (stepIndex == 1 ? stepBFormGroup.invalid : false))">
+                        Lanjut
+                        <ion-icon slot="icon-only" name="arrow-forward" slot="end"></ion-icon>
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </ion-toolbar>
+</ion-footer>
